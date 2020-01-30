@@ -7,14 +7,14 @@ import androidx.room.PrimaryKey
 @Entity
 data class Budget(
     @PrimaryKey val id: Int,
-    @ColumnInfo(name = "budget") val budget: Float,
-    @ColumnInfo(name = "spent") val spent: Float,
-    @ColumnInfo(name = "balance") val balance: Float,
-    @ColumnInfo(name = "bills") val bills: Float,
-    @ColumnInfo(name = "social") val social: Float,
-    @ColumnInfo(name = "transportation") val transportation: Float,
-    @ColumnInfo(name = "food") val food: Float,
-    @ColumnInfo(name = "insurance") val insurance: Float,
-    @ColumnInfo(name = "entertainment") val entertainment: Float,
-    @ColumnInfo(name = "other") val other: Float
+    @ColumnInfo(name = "budget") var budget: Float,
+    @ColumnInfo(name = "spent") var spent: Float,
+    @ColumnInfo(name = "balance") var balance: Float,
+    @ColumnInfo(name = "bills") var bills: Float,
+    @ColumnInfo(name = "social") var social: Float,
+    @ColumnInfo(name = "transportation") var transportation: Float,
+    @ColumnInfo(name = "food") var food: Float,
+    @ColumnInfo(name = "insurance") var insurance: Float,
+    @ColumnInfo(name = "entertainment") var entertainment: Float,
+    @ColumnInfo(name = "other") var other: Float
 )

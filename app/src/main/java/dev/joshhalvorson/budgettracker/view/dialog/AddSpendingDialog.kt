@@ -10,6 +10,8 @@ import dev.joshhalvorson.budgettracker.R
 import kotlinx.android.synthetic.main.fragment_add_spending_dialog.*
 
 class AddSpendingDialog : DialogFragment() {
+    var onResult: ((category: String, amount: Float) -> Unit)? = null
+    private var selectedItem = "Bills"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,5 +38,14 @@ class AddSpendingDialog : DialogFragment() {
             "Entertainment",
             "Other"
         )
+
+        add_spending_dialog_category_spinner.setOnItemSelectedListener { view, position, id, item ->
+            selectedItem = view.getItems<String>()[position]
+        }
+
+        add_spending_dialog_add_button.setOnClickListener {
+            onResult?.invoke(selectedItem, add_spending_dialog_amount_edit_text.text.toString().toFloat())
+            dismiss()
+        }
     }
 }

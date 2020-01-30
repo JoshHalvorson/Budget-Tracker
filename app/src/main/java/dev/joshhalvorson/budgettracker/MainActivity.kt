@@ -39,6 +39,8 @@ class MainActivity : AppCompatActivity() {
     private var chartColors = listOf<Int>()
     private var chartData = listOf<PieEntry>()
 
+    private lateinit var budget: Budget
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -77,22 +79,35 @@ class MainActivity : AppCompatActivity() {
 //                    55f
 //                )
 //            )
-            val budget = db.budgetDao().getBudget()
+            val currentBudget = db.budgetDao().getBudget()
+            budget = currentBudget[0]
             val spent = db.budgetDao().getTotalSpent()
-            expense_card_total_spent_textview.text = "Total: $spent"
-            Log.i("testBudget", budget.toString())
+            Log.i("testBudget", currentBudget.toString())
             Log.i("testBudget", spent.toString())
             withContext(Dispatchers.Main) {
-                initChart(budget[0])
+                initChart(currentBudget[0])
             }
         }
 
         edit_budget_button.setOnClickListener {
-            AddSpendingDialog().show(supportFragmentManager, "add_spending")
+            val dialog = AddSpendingDialog()
+            dialog.onResult = { category, amount ->
+                //update db
+                Log.i("dialogTest", "$category, $amount")
+                GlobalScope.launch {
+                    db.budgetDao().update(updateBudgetValues(budget, category, amount))
+                    withContext(Dispatchers.Main) {
+                        resetChart()
+                        initChart(budget)
+                    }
+                }
+            }
+            dialog.show(supportFragmentManager, "add_spending")
         }
     }
 
     private fun initChart(budget: Budget) {
+        expense_card_total_spent_textview.text = "Total: ${budget.spent}"
         budget_pie_chart.setUsePercentValues(true)
         budget_pie_chart.isDrawHoleEnabled = true
         budget_pie_chart.setHoleColor(Color.WHITE)
@@ -109,6 +124,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setData(budget: Budget) {
         val entries: ArrayList<PieEntry> = ArrayList()
+        entries.clear()
         entries.add(PieEntry(budget.bills))
         entries.add(PieEntry(budget.social))
         entries.add(PieEntry(budget.transportation))
@@ -148,6 +164,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setLegend(budget: Budget) {
+        budget_chart_legend.removeAllViews()
         chartData.forEachIndexed { index, pieEntry ->
             budget_chart_legend.addView(createLegendView(pieEntry, index, budget))
         }
@@ -200,5 +217,26 @@ class MainActivity : AppCompatActivity() {
         expense_breakdown_budget_list.layoutManager = LinearLayoutManager(applicationContext)
         val adapter = BudgetRecyclerviewAdapter(data, budget)
         expense_breakdown_budget_list.adapter = adapter
+    }
+
+    private fun updateBudgetValues(budget: Budget, category: String, amount: Float) : Budget {
+        when (category) {
+            "Bills" -> budget.bills += amount
+            "Social" -> budget.social += amount
+            "Transportation" -> budget.transportation += amount
+            "Food" -> budget.food += amount
+            "Insurance" -> budget.insurance += amount
+            "Entertainment" -> budget.entertainment += amount
+            "Other" -> budget.other += amount
+        }
+        budget.spent += amount
+        budget.balance -= amount
+        return budget
+    }
+
+    private fun resetChart() {
+        budget_pie_chart.data.clearValues()
+        budget_pie_chart.clear()
+        budget_pie_chart.invalidate()
     }
 }
