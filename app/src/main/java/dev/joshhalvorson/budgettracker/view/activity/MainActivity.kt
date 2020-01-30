@@ -234,7 +234,7 @@ class MainActivity : AppCompatActivity() {
         val dialog = InitBudgetDialog()
         dialog.onResult = { amount ->
             GlobalScope.launch {
-                val budget = Budget(
+                val newBudget = Budget(
                     1,
                     amount,
                     0f,
@@ -247,12 +247,13 @@ class MainActivity : AppCompatActivity() {
                     0f,
                     0f
                 )
+                budget = newBudget
                 db.budgetDao().insert(
-                    budget
+                    newBudget
                 )
                 withContext(Dispatchers.Main) {
                     showViews()
-                    initChart(budget)
+                    initChart(newBudget)
                 }
             }
 
