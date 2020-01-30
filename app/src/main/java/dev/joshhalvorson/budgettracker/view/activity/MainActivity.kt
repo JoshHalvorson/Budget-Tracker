@@ -1,4 +1,4 @@
-package dev.joshhalvorson.budgettracker
+package dev.joshhalvorson.budgettracker.view.activity
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -20,6 +20,7 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.utils.MPPointF
+import dev.joshhalvorson.budgettracker.R
 import dev.joshhalvorson.budgettracker.adapter.BudgetRecyclerviewAdapter
 import dev.joshhalvorson.budgettracker.database.AppDatabase
 import dev.joshhalvorson.budgettracker.model.Budget
