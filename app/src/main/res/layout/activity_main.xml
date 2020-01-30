@@ -25,7 +25,12 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="32dp"
+        android:backgroundTint="@color/fabColor"
         android:clickable="true"
+        app:tint="@null"
+        app:backgroundTint="@color/fabColor"
+        android:src="@drawable/ic_add_black_24dp"
+        app:borderWidth="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_add_black_24dp" />

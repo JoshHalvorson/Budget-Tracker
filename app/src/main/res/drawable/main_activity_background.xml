@@ -9,7 +9,7 @@
                 <size android:height="500dp" android:width="900dp"/>
                 <stroke
                     android:width="488dp"
-                    android:color="#ffd11a"/>
+                    android:color="@color/backgroundRectYellow"/>
             </shape>
         </rotate>
     </item>
@@ -22,7 +22,7 @@
                 <size android:height="500dp" android:width="900dp"/>
                 <stroke
                     android:width="488dp"
-                    android:color="#ff00ff"/>
+                    android:color="@color/backgroundRectPurple"/>
             </shape>
         </rotate>
     </item>
