@@ -44,12 +44,17 @@ class MainActivity : AppCompatActivity() {
     private var chartColors = listOf<Int>()
     private var chartData = listOf<PieEntry>()
 
+    private val listData = ArrayList<Pair<String, Float>>()
+
+    private lateinit var adapter: BudgetRecyclerviewAdapter
     private lateinit var budget: Budget
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         Stetho.initializeWithDefaults(applicationContext)
+
+        expense_breakdown_budget_list.layoutManager = LinearLayoutManager(applicationContext)
 
         val db =
             Room.databaseBuilder(applicationContext, AppDatabase::class.java, "budget-db").build()
@@ -69,7 +74,7 @@ class MainActivity : AppCompatActivity() {
                 Log.i("testBudget", currentBudget.toString())
                 Log.i("testBudget", spent.toString())
                 withContext(Dispatchers.Main) {
-                    initChart(currentBudget[0])
+                    initChart(currentBudget[0], db)
                 }
             }
 
@@ -81,10 +86,12 @@ class MainActivity : AppCompatActivity() {
                 //update db
                 Log.i("dialogTest", "$category, $amount")
                 GlobalScope.launch {
-                    db.budgetDao().update(updateBudgetValues(budget, category, amount))
+                    val newBudget = updateBudgetValues(budget, category, amount)
+                    db.budgetDao().update(newBudget)
                     withContext(Dispatchers.Main) {
+                        listData.clear()
                         resetChart()
-                        initChart(budget)
+                        initChart(newBudget, db)
                     }
                 }
             }
@@ -92,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initChart(budget: Budget) {
+    private fun initChart(budget: Budget, db: AppDatabase) {
         expense_card_total_spent_textview.text = "Total: ${budget.spent}"
         budget_pie_chart.setUsePercentValues(true)
         budget_pie_chart.isDrawHoleEnabled = true
@@ -105,10 +112,14 @@ class MainActivity : AppCompatActivity() {
         budget_pie_chart.setCenterTextSize(18f)
         budget_pie_chart.legend.isEnabled = false
         budget_pie_chart.description.isEnabled = false
-        setData(budget)
+
+        adapter = BudgetRecyclerviewAdapter(listData, budget)
+        expense_breakdown_budget_list.adapter = adapter
+
+        setData(budget, db)
     }
 
-    private fun setData(budget: Budget) {
+    private fun setData(budget: Budget, db: AppDatabase) {
         val entries: ArrayList<PieEntry> = ArrayList()
         entries.clear()
         entries.add(PieEntry(budget.bills))
@@ -146,7 +157,27 @@ class MainActivity : AppCompatActivity() {
         budget_pie_chart.highlightValues(null)
         budget_pie_chart.invalidate()
         setLegend(budget)
-        initRecyclerView(budget)
+
+        listData.clear()
+        expenseTypes.forEachIndexed { i, s ->
+            GlobalScope.launch {
+                val amount = when (s) {
+                    "Bills" -> db.budgetDao().getBills()
+                    "Social" -> db.budgetDao().getSocial()
+                    "Transportation" -> db.budgetDao().getTransportation()
+                    "Food" -> db.budgetDao().getFood()
+                    "Insurance" -> db.budgetDao().getInsurance()
+                    "Entertainment" -> db.budgetDao().getEntertainment()
+                    "Other" -> db.budgetDao().getOther()
+                    else -> 0.0f
+                }
+                withContext(Dispatchers.Main) {
+                    listData.add(Pair(s, amount))
+                    adapter.notifyDataSetChanged()
+                }
+            }
+        }
+        //initRecyclerView(budget)
     }
 
     private fun setLegend(budget: Budget) {
@@ -253,7 +284,7 @@ class MainActivity : AppCompatActivity() {
                 )
                 withContext(Dispatchers.Main) {
                     showViews()
-                    initChart(newBudget)
+                    initChart(newBudget, db)
                 }
             }
 

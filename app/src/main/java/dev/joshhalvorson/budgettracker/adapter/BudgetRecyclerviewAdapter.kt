@@ -1,5 +1,6 @@
 package dev.joshhalvorson.budgettracker.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,8 +29,6 @@ class BudgetRecyclerviewAdapter(
     override fun getItemCount() = data.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        data.sortWith(compareBy { it.second })
-        data.reverse()
         holder.bindItem(position, data[position], budget)
     }
 
@@ -41,6 +40,7 @@ class BudgetRecyclerviewAdapter(
         private val expensePercentBar = itemView.expense_percent_bar
 
         fun bindItem(position: Int, expensePair: Pair<String, Float>, budget: Budget) {
+            Log.i("adawd", expensePair.toString())
             val percent = if (expensePair.second != 0.0f) {
                 ((expensePair.second / budget.spent) * 100).roundToInt()
             } else {

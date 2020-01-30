@@ -41,4 +41,10 @@ interface BudgetDao {
     @Query("SELECT insurance FROM budget WHERE id=1")
     fun getInsurance(): Float
 
+    @Query("SELECT entertainment FROM budget WHERE id=1")
+    fun getEntertainment(): Float
+
+    @Query("SELECT other FROM budget WHERE id=1")
+    fun getOther(): Float
+
 }
