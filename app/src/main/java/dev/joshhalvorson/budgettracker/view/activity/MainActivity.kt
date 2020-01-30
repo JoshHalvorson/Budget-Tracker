@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.ImageView
@@ -25,6 +26,7 @@ import dev.joshhalvorson.budgettracker.adapter.BudgetRecyclerviewAdapter
 import dev.joshhalvorson.budgettracker.database.AppDatabase
 import dev.joshhalvorson.budgettracker.model.Budget
 import dev.joshhalvorson.budgettracker.view.dialog.AddSpendingDialog
+import dev.joshhalvorson.budgettracker.view.dialog.InitBudgetDialog
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.expense_breakdown_card_content.*
 import kotlinx.coroutines.Dispatchers
@@ -50,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         val db =
             Room.databaseBuilder(applicationContext, AppDatabase::class.java, "budget-db").build()
         GlobalScope.launch {
-//            db.budgetDao().insert(
+            //            db.budgetDao().insert(
 //                Budget(
 //                    1,
 //                    6000f,
@@ -81,13 +83,21 @@ class MainActivity : AppCompatActivity() {
 //                )
 //            )
             val currentBudget = db.budgetDao().getBudget()
-            budget = currentBudget[0]
-            val spent = db.budgetDao().getTotalSpent()
-            Log.i("testBudget", currentBudget.toString())
-            Log.i("testBudget", spent.toString())
-            withContext(Dispatchers.Main) {
-                initChart(currentBudget[0])
+            if (currentBudget.isEmpty()) {
+                withContext(Dispatchers.Main) {
+                    initBudget(db)
+                    hideViews()
+                }
+            } else {
+                budget = currentBudget[0]
+                val spent = db.budgetDao().getTotalSpent()
+                Log.i("testBudget", currentBudget.toString())
+                Log.i("testBudget", spent.toString())
+                withContext(Dispatchers.Main) {
+                    initChart(currentBudget[0])
+                }
             }
+
         }
 
         edit_budget_button.setOnClickListener {
@@ -185,7 +195,11 @@ class MainActivity : AppCompatActivity() {
         expenseTitle.layoutParams = expenseTitleLayoutParams
 
         val expensePercent = TextView(applicationContext)
-        expensePercent.text = "${((pieEntry.value / budget.spent) * 100).roundToInt()}%"
+        if (pieEntry.value != 0.0f) {
+            expensePercent.text = "${((pieEntry.value / budget.spent) * 100).roundToInt()}%"
+        } else {
+            expensePercent.text = "0%"
+        }
         expensePercent.setTextColor(Color.BLACK)
         val expensePercentLayoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
         expensePercentLayoutParams.weight = 0.0f
@@ -220,7 +234,7 @@ class MainActivity : AppCompatActivity() {
         expense_breakdown_budget_list.adapter = adapter
     }
 
-    private fun updateBudgetValues(budget: Budget, category: String, amount: Float) : Budget {
+    private fun updateBudgetValues(budget: Budget, category: String, amount: Float): Budget {
         when (category) {
             "Bills" -> budget.bills += amount
             "Social" -> budget.social += amount
@@ -239,5 +253,49 @@ class MainActivity : AppCompatActivity() {
         budget_pie_chart.data.clearValues()
         budget_pie_chart.clear()
         budget_pie_chart.invalidate()
+    }
+
+    private fun initBudget(db: AppDatabase) {
+        val dialog = InitBudgetDialog()
+        dialog.onResult = { amount ->
+            GlobalScope.launch {
+                val budget = Budget(
+                    1,
+                    amount,
+                    0f,
+                    amount,
+                    0f,
+                    0f,
+                    0f,
+                    0f,
+                    0f,
+                    0f,
+                    0f
+                )
+                db.budgetDao().insert(
+                    budget
+                )
+                withContext(Dispatchers.Main) {
+                    showViews()
+                    initChart(budget)
+                }
+            }
+
+        }
+        dialog.show(supportFragmentManager, "init_budget")
+    }
+
+    private fun hideViews() {
+        expense_breakdown_card.visibility = View.GONE
+        budget_pie_chart.visibility = View.GONE
+        budget_chart_legend.visibility = View.GONE
+        edit_budget_button.visibility = View.GONE
+    }
+
+    private fun showViews() {
+        expense_breakdown_card.visibility = View.VISIBLE
+        budget_pie_chart.visibility = View.VISIBLE
+        budget_chart_legend.visibility = View.VISIBLE
+        edit_budget_button.visibility = View.VISIBLE
     }
 }
