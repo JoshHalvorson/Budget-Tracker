@@ -159,6 +159,7 @@ class MainActivity : AppCompatActivity() {
 
         val expensePercent = TextView(applicationContext)
         expensePercent.text = "${((pieEntry.value / budget.spent!!) * 100).roundToInt()}%"
+        expensePercent.setTextColor(Color.BLACK)
         val expensePercentLayoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
         expensePercentLayoutParams.weight = 0.0f
         expensePercent.layoutParams = expensePercentLayoutParams
