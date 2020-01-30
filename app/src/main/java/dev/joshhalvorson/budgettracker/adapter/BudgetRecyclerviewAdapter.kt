@@ -40,7 +40,6 @@ class BudgetRecyclerviewAdapter(
         private val expensePercentBar = itemView.expense_percent_bar
 
         fun bindItem(position: Int, expensePair: Pair<String, Float>, budget: Budget) {
-            Log.i("adawd", expensePair.toString())
             val percent = if (expensePair.second != 0.0f) {
                 ((expensePair.second / budget.spent) * 100).roundToInt()
             } else {
