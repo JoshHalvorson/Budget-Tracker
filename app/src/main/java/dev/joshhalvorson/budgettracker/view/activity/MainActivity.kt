@@ -38,7 +38,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
-
 class MainActivity : AppCompatActivity() {
     private val expenseTypes =
         listOf("Bills", "Social", "Transportation", "Food", "Insurance", "Entertainment", "Other")

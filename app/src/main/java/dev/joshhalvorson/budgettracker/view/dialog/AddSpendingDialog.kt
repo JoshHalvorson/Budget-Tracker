@@ -44,7 +44,10 @@ class AddSpendingDialog : DialogFragment() {
         }
 
         add_spending_dialog_add_button.setOnClickListener {
-            onResult?.invoke(selectedItem, add_spending_dialog_amount_edit_text.text.toString().toFloat())
+            onResult?.invoke(
+                selectedItem,
+                add_spending_dialog_amount_edit_text.text.toString().toFloat()
+            )
             dismiss()
         }
     }
