@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import android.widget.LinearLayout.HORIZONTAL
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
 import com.facebook.stetho.Stetho
 import com.github.mikephil.charting.animation.Easing
@@ -19,10 +20,12 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.utils.MPPointF
+import dev.joshhalvorson.budgettracker.adapter.BudgetRecyclerviewAdapter
 import dev.joshhalvorson.budgettracker.database.AppDatabase
 import dev.joshhalvorson.budgettracker.model.Budget
 import dev.joshhalvorson.budgettracker.view.dialog.AddSpendingDialog
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.expense_breakdown_card_content.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -140,6 +143,7 @@ class MainActivity : AppCompatActivity() {
         budget_pie_chart.highlightValues(null)
         budget_pie_chart.invalidate()
         setLegend(budget)
+        initRecyclerView(budget)
     }
 
     private fun setLegend(budget: Budget) {
@@ -183,5 +187,17 @@ class MainActivity : AppCompatActivity() {
         ll.addView(expensePercent)
 
         return ll
+    }
+
+    private fun initRecyclerView(budget: Budget) {
+        val data = ArrayList<Pair<String, Float>>()
+
+        expenseTypes.forEachIndexed { i, s ->
+            data.add(Pair(s, chartData[i].value))
+        }
+
+        expense_breakdown_budget_list.layoutManager = LinearLayoutManager(applicationContext)
+        val adapter = BudgetRecyclerviewAdapter(data, budget)
+        expense_breakdown_budget_list.adapter = adapter
     }
 }
