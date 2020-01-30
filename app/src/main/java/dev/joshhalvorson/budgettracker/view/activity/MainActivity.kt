@@ -2,6 +2,7 @@ package dev.joshhalvorson.budgettracker.view.activity
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -33,6 +34,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 
@@ -52,36 +55,9 @@ class MainActivity : AppCompatActivity() {
         val db =
             Room.databaseBuilder(applicationContext, AppDatabase::class.java, "budget-db").build()
         GlobalScope.launch {
-            //            db.budgetDao().insert(
-//                Budget(
-//                    1,
-//                    6000f,
-//                    2630f,
-//                    6000f - 2630f,
-//                    1500f,
-//                    100f,
-//                    50f,
-//                    500f,
-//                    400f,
-//                    25f,
-//                    55f
-//                )
-//            )
-//            db.budgetDao().update(
-//                Budget(
-//                    1,
-//                    6000f,
-//                    2630f,
-//                    6000f - 2630f,
-//                    1500f,
-//                    100f,
-//                    50f,
-//                    500f,
-//                    400f,
-//                    25f,
-//                    55f
-//                )
-//            )
+            if (getDate() == "01") {
+                db.clearAllTables()
+            }
             val currentBudget = db.budgetDao().getBudget()
             if (currentBudget.isEmpty()) {
                 withContext(Dispatchers.Main) {
@@ -297,5 +273,15 @@ class MainActivity : AppCompatActivity() {
         budget_pie_chart.visibility = View.VISIBLE
         budget_chart_legend.visibility = View.VISIBLE
         edit_budget_button.visibility = View.VISIBLE
+    }
+
+    private fun getDate(): String {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val current = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ofPattern("dd")
+            current.format(formatter)
+        } else {
+            ""
+        }
     }
 }
