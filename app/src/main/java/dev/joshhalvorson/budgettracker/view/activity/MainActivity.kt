@@ -159,8 +159,8 @@ class MainActivity : AppCompatActivity() {
         setLegend(budget)
 
         listData.clear()
-        expenseTypes.forEachIndexed { i, s ->
-            GlobalScope.launch {
+        GlobalScope.launch {
+            expenseTypes.forEachIndexed { i, s ->
                 val amount = when (s) {
                     "Bills" -> db.budgetDao().getBills()
                     "Social" -> db.budgetDao().getSocial()
@@ -171,13 +171,14 @@ class MainActivity : AppCompatActivity() {
                     "Other" -> db.budgetDao().getOther()
                     else -> 0.0f
                 }
-                withContext(Dispatchers.Main) {
-                    listData.add(Pair(s, amount))
-                    adapter.notifyDataSetChanged()
-                }
+                listData.add(Pair(s, amount))
+            }
+            withContext(Dispatchers.Main) {
+                listData.sortWith(compareBy {it.second})
+                listData.reverse()
+                adapter.notifyDataSetChanged()
             }
         }
-        //initRecyclerView(budget)
     }
 
     private fun setLegend(budget: Budget) {
@@ -226,18 +227,6 @@ class MainActivity : AppCompatActivity() {
         ll.addView(expensePercent)
 
         return ll
-    }
-
-    private fun initRecyclerView(budget: Budget) {
-        val data = ArrayList<Pair<String, Float>>()
-
-        expenseTypes.forEachIndexed { i, s ->
-            data.add(Pair(s, chartData[i].value))
-        }
-
-        expense_breakdown_budget_list.layoutManager = LinearLayoutManager(applicationContext)
-        val adapter = BudgetRecyclerviewAdapter(data, budget)
-        expense_breakdown_budget_list.adapter = adapter
     }
 
     private fun updateBudgetValues(budget: Budget, category: String, amount: Float): Budget {
