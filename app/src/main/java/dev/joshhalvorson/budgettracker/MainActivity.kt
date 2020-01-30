@@ -79,6 +79,7 @@ class MainActivity : AppCompatActivity() {
 //            )
             val budget = db.budgetDao().getBudget()
             val spent = db.budgetDao().getTotalSpent()
+            expense_card_total_spent_textview.text = "Total: $spent"
             Log.i("testBudget", budget.toString())
             Log.i("testBudget", spent.toString())
             withContext(Dispatchers.Main) {
