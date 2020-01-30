@@ -44,32 +44,36 @@ class MainActivity : AppCompatActivity() {
         val db =
             Room.databaseBuilder(applicationContext, AppDatabase::class.java, "budget-db").build()
         GlobalScope.launch {
-            //            db.budgetDao().insert(Budget(
-//                1,
-//                6000f,
-//                2630f,
-//                6000f - 2630f,
-//                1500f,
-//                100f,
-//                50f,
-//                500f,
-//                400f,
-//                25f,
-//                55f
-//            ))
-//            db.budgetDao().update(Budget(
-//                1,
-//                6000f,
-//                2630f,
-//                6000f - 2630f,
-//                1500f,
-//                100f,
-//                50f,
-//                500f,
-//                400f,
-//                25f,
-//                55f
-//            ))
+//            db.budgetDao().insert(
+//                Budget(
+//                    1,
+//                    6000f,
+//                    2630f,
+//                    6000f - 2630f,
+//                    1500f,
+//                    100f,
+//                    50f,
+//                    500f,
+//                    400f,
+//                    25f,
+//                    55f
+//                )
+//            )
+//            db.budgetDao().update(
+//                Budget(
+//                    1,
+//                    6000f,
+//                    2630f,
+//                    6000f - 2630f,
+//                    1500f,
+//                    100f,
+//                    50f,
+//                    500f,
+//                    400f,
+//                    25f,
+//                    55f
+//                )
+//            )
             val budget = db.budgetDao().getBudget()
             val spent = db.budgetDao().getTotalSpent()
             Log.i("testBudget", budget.toString())
@@ -101,13 +105,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun setData(budget: Budget) {
         val entries: ArrayList<PieEntry> = ArrayList()
-        entries.add(PieEntry(budget.bills!!))
-        entries.add(PieEntry(budget.social!!))
-        entries.add(PieEntry(budget.transportation!!))
-        entries.add(PieEntry(budget.food!!))
-        entries.add(PieEntry(budget.insurance!!))
-        entries.add(PieEntry(budget.entertainment!!))
-        entries.add(PieEntry(budget.other!!))
+        entries.add(PieEntry(budget.bills))
+        entries.add(PieEntry(budget.social))
+        entries.add(PieEntry(budget.transportation))
+        entries.add(PieEntry(budget.food))
+        entries.add(PieEntry(budget.insurance))
+        entries.add(PieEntry(budget.entertainment))
+        entries.add(PieEntry(budget.other))
         chartData = entries
 
         val dataSet = PieDataSet(entries, "Expenses")
@@ -158,7 +162,7 @@ class MainActivity : AppCompatActivity() {
         expenseTitle.layoutParams = expenseTitleLayoutParams
 
         val expensePercent = TextView(applicationContext)
-        expensePercent.text = "${((pieEntry.value / budget.spent!!) * 100).roundToInt()}%"
+        expensePercent.text = "${((pieEntry.value / budget.spent) * 100).roundToInt()}%"
         expensePercent.setTextColor(Color.BLACK)
         val expensePercentLayoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
         expensePercentLayoutParams.weight = 0.0f
