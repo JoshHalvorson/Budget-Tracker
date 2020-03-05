@@ -2,7 +2,6 @@ package dev.joshhalvorson.budgettracker.view.activity
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -34,8 +33,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
@@ -172,7 +169,7 @@ class MainActivity : AppCompatActivity() {
                 listData.add(Pair(s, amount))
             }
             withContext(Dispatchers.Main) {
-                listData.sortWith(compareBy {it.second})
+                listData.sortWith(compareBy { it.second })
                 listData.reverse()
                 adapter.notifyDataSetChanged()
             }
