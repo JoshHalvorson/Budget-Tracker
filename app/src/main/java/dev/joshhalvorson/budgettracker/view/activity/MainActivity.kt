@@ -59,9 +59,7 @@ class MainActivity : AppCompatActivity() {
         val db =
             Room.databaseBuilder(applicationContext, AppDatabase::class.java, "budget-db").build()
         GlobalScope.launch {
-            if (getDate() == "01") {
-                db.clearAllTables()
-            }
+
             val currentBudget = db.budgetDao().getBudget()
             if (currentBudget.isEmpty()) {
                 withContext(Dispatchers.Main) {
@@ -295,13 +293,4 @@ class MainActivity : AppCompatActivity() {
         edit_budget_button.visibility = View.VISIBLE
     }
 
-    private fun getDate(): String {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val current = LocalDateTime.now()
-            val formatter = DateTimeFormatter.ofPattern("dd")
-            current.format(formatter)
-        } else {
-            ""
-        }
-    }
 }
