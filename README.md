@@ -12,3 +12,8 @@ Also, thanks for checking it out!
 ## Libraries
 
 I used Coroutines, RoomDB, Material Design Library, and stetho for some light db debugging. 
+
+## Images
+
+<img src="https://i.imgur.com/MqWbEGJ.png" width=300 align=left>
+<img src="https://i.imgur.com/SDaj582.png" width=300 align=left>
