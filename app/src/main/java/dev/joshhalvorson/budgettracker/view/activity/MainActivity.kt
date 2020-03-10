@@ -11,7 +11,11 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.LinearLayout.HORIZONTAL
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
 import com.facebook.stetho.Stetho
@@ -32,6 +36,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.concurrent.Executor
 import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
@@ -45,12 +50,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: BudgetRecyclerviewAdapter
     private lateinit var budget: Budget
     private lateinit var binding: ActivityMainBinding
-
+    private lateinit var executor: Executor
+    private lateinit var biometricPrompt: BiometricPrompt
+    private lateinit var promptInfo: BiometricPrompt.PromptInfo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        hideViews()
 
         Stetho.initializeWithDefaults(applicationContext)
 
@@ -59,24 +68,22 @@ class MainActivity : AppCompatActivity() {
 
         val db =
             Room.databaseBuilder(applicationContext, AppDatabase::class.java, "budget-db").build()
-        GlobalScope.launch {
 
-            val currentBudget = db.budgetDao().getBudget()
-            if (currentBudget.isEmpty()) {
-                withContext(Dispatchers.Main) {
-                    initBudget(db)
-                    hideViews()
-                }
-            } else {
-                budget = currentBudget[0]
-                val spent = db.budgetDao().getTotalSpent()
-                Log.i("testBudget", currentBudget.toString())
-                Log.i("testBudget", spent.toString())
-                withContext(Dispatchers.Main) {
-                    initChart(currentBudget[0], db)
-                }
+        val biometricManager = BiometricManager.from(this)
+        when (biometricManager.canAuthenticate()) {
+            BiometricManager.BIOMETRIC_SUCCESS -> {
+                Log.d("BioAuth", "App can authenticate using biometrics.")
+                authenticateWithBio(db)
             }
-
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE ->
+                Log.e("BioAuth", "No biometric features available on this device.")
+            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE ->
+                Log.e("BioAuth", "Biometric features are currently unavailable.")
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED ->
+                Log.e(
+                    "BioAuth", "The user hasn't associated " +
+                            "any biometric credentials with their account."
+                )
         }
 
         binding.editBudgetButton.setOnClickListener {
@@ -292,6 +299,73 @@ class MainActivity : AppCompatActivity() {
         binding.budgetPieChart.visibility = View.VISIBLE
         binding.budgetChartLegend.visibility = View.VISIBLE
         binding.editBudgetButton.visibility = View.VISIBLE
+    }
+
+    private fun authenticateWithBio(db: AppDatabase) {
+        hideViews()
+        executor = ContextCompat.getMainExecutor(applicationContext)
+        biometricPrompt = BiometricPrompt(this, executor,
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationError(
+                    errorCode: Int,
+                    errString: CharSequence
+                ) {
+                    super.onAuthenticationError(errorCode, errString)
+                    Toast.makeText(
+                            applicationContext,
+                            "$errString", Toast.LENGTH_SHORT
+                        )
+                        .show()
+                    finishAffinity()
+                }
+
+                override fun onAuthenticationSucceeded(
+                    result: BiometricPrompt.AuthenticationResult
+                ) {
+                    super.onAuthenticationSucceeded(result)
+                    Toast.makeText(
+                            applicationContext,
+                            "Authentication succeeded!", Toast.LENGTH_SHORT
+                        )
+                        .show()
+                    GlobalScope.launch {
+                        val currentBudget = db.budgetDao().getBudget()
+                        if (currentBudget.isEmpty()) {
+                            withContext(Dispatchers.Main) {
+                                initBudget(db)
+                                hideViews()
+                            }
+                        } else {
+                            budget = currentBudget[0]
+                            val spent = db.budgetDao().getTotalSpent()
+                            Log.i("testBudget", currentBudget.toString())
+                            Log.i("testBudget", spent.toString())
+                            withContext(Dispatchers.Main) {
+                                showViews()
+                                initChart(currentBudget[0], db)
+                            }
+                        }
+                    }
+                }
+
+                override fun onAuthenticationFailed() {
+                    super.onAuthenticationFailed()
+                    Toast.makeText(
+                            applicationContext, "Authentication failed",
+                            Toast.LENGTH_SHORT
+                        )
+                        .show()
+                    finishAffinity()
+                }
+            })
+
+        promptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle("Verify indentity")
+            .setSubtitle("Log in using your biometric credential, or device credential")
+            .setDeviceCredentialAllowed(true)
+            .build()
+
+        biometricPrompt.authenticate(promptInfo)
     }
 
 }
