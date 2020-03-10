@@ -82,7 +82,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline">
 
-        <include layout="@layout/expense_breakdown_card_content" />
+        <include layout="@layout/expense_breakdown_card_content" android:id="@+id/expense_breakdown"/>
 
     </androidx.cardview.widget.CardView>
 

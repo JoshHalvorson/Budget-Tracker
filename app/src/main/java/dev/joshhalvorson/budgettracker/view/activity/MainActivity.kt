@@ -24,11 +24,10 @@ import com.github.mikephil.charting.utils.MPPointF
 import dev.joshhalvorson.budgettracker.R
 import dev.joshhalvorson.budgettracker.adapter.BudgetRecyclerviewAdapter
 import dev.joshhalvorson.budgettracker.database.AppDatabase
+import dev.joshhalvorson.budgettracker.databinding.ActivityMainBinding
 import dev.joshhalvorson.budgettracker.model.Budget
 import dev.joshhalvorson.budgettracker.view.dialog.AddSpendingDialog
 import dev.joshhalvorson.budgettracker.view.dialog.InitBudgetDialog
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.expense_breakdown_card_content.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -45,13 +44,18 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var adapter: BudgetRecyclerviewAdapter
     private lateinit var budget: Budget
+    private lateinit var binding: ActivityMainBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         Stetho.initializeWithDefaults(applicationContext)
 
-        expense_breakdown_budget_list.layoutManager = LinearLayoutManager(applicationContext)
+        binding.expenseBreakdown.expenseBreakdownBudgetList.layoutManager =
+            LinearLayoutManager(applicationContext)
 
         val db =
             Room.databaseBuilder(applicationContext, AppDatabase::class.java, "budget-db").build()
@@ -75,7 +79,7 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        edit_budget_button.setOnClickListener {
+        binding.editBudgetButton.setOnClickListener {
             val dialog = AddSpendingDialog()
             dialog.onResult = { category, amount ->
                 //update db
@@ -95,21 +99,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initChart(budget: Budget, db: AppDatabase) {
-        expense_card_total_spent_textview.text = "Total: ${budget.spent}"
-        budget_pie_chart.setUsePercentValues(true)
-        budget_pie_chart.isDrawHoleEnabled = true
-        budget_pie_chart.setHoleColor(Color.WHITE)
-        budget_pie_chart.setTransparentCircleColor(Color.WHITE)
-        budget_pie_chart.setTransparentCircleAlpha(110)
-        budget_pie_chart.holeRadius = 89f
-        budget_pie_chart.animateY(1400, Easing.EaseInOutQuad)
-        budget_pie_chart.centerText = "Expenses: \n ${budget.spent}"
-        budget_pie_chart.setCenterTextSize(18f)
-        budget_pie_chart.legend.isEnabled = false
-        budget_pie_chart.description.isEnabled = false
+        binding.expenseBreakdown.expenseCardTotalSpentTextview.text = "Total: ${budget.spent}"
+        binding.budgetPieChart.setUsePercentValues(true)
+        binding.budgetPieChart.isDrawHoleEnabled = true
+        binding.budgetPieChart.setHoleColor(Color.WHITE)
+        binding.budgetPieChart.setTransparentCircleColor(Color.WHITE)
+        binding.budgetPieChart.setTransparentCircleAlpha(110)
+        binding.budgetPieChart.holeRadius = 89f
+        binding.budgetPieChart.animateY(1400, Easing.EaseInOutQuad)
+        binding.budgetPieChart.centerText = "Expenses: \n ${budget.spent}"
+        binding.budgetPieChart.setCenterTextSize(18f)
+        binding.budgetPieChart.legend.isEnabled = false
+        binding.budgetPieChart.description.isEnabled = false
 
         adapter = BudgetRecyclerviewAdapter(listData, budget)
-        expense_breakdown_budget_list.adapter = adapter
+        binding.expenseBreakdown.expenseBreakdownBudgetList.adapter = adapter
 
         setData(budget, db)
     }
@@ -144,13 +148,13 @@ class MainActivity : AppCompatActivity() {
         dataSet.setDrawValues(false)
 
         val data = PieData(dataSet)
-        data.setValueFormatter(PercentFormatter(budget_pie_chart))
+        data.setValueFormatter(PercentFormatter(binding.budgetPieChart))
         data.setValueTextSize(11f)
         data.setValueTextColor(Color.WHITE)
 
-        budget_pie_chart.data = data
-        budget_pie_chart.highlightValues(null)
-        budget_pie_chart.invalidate()
+        binding.budgetPieChart.data = data
+        binding.budgetPieChart.highlightValues(null)
+        binding.budgetPieChart.invalidate()
         setLegend(budget)
 
         listData.clear()
@@ -177,9 +181,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setLegend(budget: Budget) {
-        budget_chart_legend.removeAllViews()
+        binding.budgetChartLegend.removeAllViews()
         chartData.forEachIndexed { index, pieEntry ->
-            budget_chart_legend.addView(createLegendView(pieEntry, index, budget))
+            binding.budgetChartLegend.addView(createLegendView(pieEntry, index, budget))
         }
     }
 
@@ -240,9 +244,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun resetChart() {
-        budget_pie_chart.data.clearValues()
-        budget_pie_chart.clear()
-        budget_pie_chart.invalidate()
+        binding.budgetPieChart.data.clearValues()
+        binding.budgetPieChart.clear()
+        binding.budgetPieChart.invalidate()
     }
 
     private fun initBudget(db: AppDatabase) {
@@ -277,17 +281,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun hideViews() {
-        expense_breakdown_card.visibility = View.GONE
-        budget_pie_chart.visibility = View.GONE
-        budget_chart_legend.visibility = View.GONE
-        edit_budget_button.visibility = View.GONE
+        binding.expenseBreakdownCard.visibility = View.GONE
+        binding.budgetPieChart.visibility = View.GONE
+        binding.budgetChartLegend.visibility = View.GONE
+        binding.editBudgetButton.visibility = View.GONE
     }
 
     private fun showViews() {
-        expense_breakdown_card.visibility = View.VISIBLE
-        budget_pie_chart.visibility = View.VISIBLE
-        budget_chart_legend.visibility = View.VISIBLE
-        edit_budget_button.visibility = View.VISIBLE
+        binding.expenseBreakdownCard.visibility = View.VISIBLE
+        binding.budgetPieChart.visibility = View.VISIBLE
+        binding.budgetChartLegend.visibility = View.VISIBLE
+        binding.editBudgetButton.visibility = View.VISIBLE
     }
 
 }

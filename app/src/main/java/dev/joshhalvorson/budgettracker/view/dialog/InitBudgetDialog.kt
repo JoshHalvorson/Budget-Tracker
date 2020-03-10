@@ -6,17 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
-import dev.joshhalvorson.budgettracker.R
-import kotlinx.android.synthetic.main.fragment_init_budget_dialog.*
+import dev.joshhalvorson.budgettracker.databinding.FragmentInitBudgetDialogBinding
 
 class InitBudgetDialog : DialogFragment() {
     var onResult: ((amount: Float) -> Unit)? = null
+    private var _binding: FragmentInitBudgetDialogBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_init_budget_dialog, container, false)
+        _binding = FragmentInitBudgetDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onResume() {
@@ -27,8 +29,8 @@ class InitBudgetDialog : DialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        init_budget_dialog_add_button.setOnClickListener {
-            onResult?.invoke(init_budget_dialog_amount_edit_text.text.toString().toFloat())
+        binding.initBudgetDialogAddButton.setOnClickListener {
+            onResult?.invoke(binding.initBudgetDialogAmountEditText.text.toString().toFloat())
             dismiss()
         }
     }

@@ -6,19 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
-import dev.joshhalvorson.budgettracker.R
-import kotlinx.android.synthetic.main.fragment_add_spending_dialog.*
+import dev.joshhalvorson.budgettracker.databinding.FragmentAddSpendingDialogBinding
 
 class AddSpendingDialog : DialogFragment() {
     var onResult: ((category: String, amount: Float) -> Unit)? = null
     private var selectedItem = "Bills"
 
+    private var _binding: FragmentAddSpendingDialogBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_spending_dialog, container, false)
+        _binding = FragmentAddSpendingDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onResume() {
@@ -29,7 +31,7 @@ class AddSpendingDialog : DialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        add_spending_dialog_category_spinner.setItems(
+        binding.addSpendingDialogCategorySpinner.setItems(
             "Bills",
             "Social",
             "Transportation",
@@ -39,14 +41,14 @@ class AddSpendingDialog : DialogFragment() {
             "Other"
         )
 
-        add_spending_dialog_category_spinner.setOnItemSelectedListener { view, position, id, item ->
+        binding.addSpendingDialogCategorySpinner.setOnItemSelectedListener { view, position, id, item ->
             selectedItem = view.getItems<String>()[position]
         }
 
-        add_spending_dialog_add_button.setOnClickListener {
+        binding.addSpendingDialogAddButton.setOnClickListener {
             onResult?.invoke(
                 selectedItem,
-                add_spending_dialog_amount_edit_text.text.toString().toFloat()
+                binding.addSpendingDialogAmountEditText.text.toString().toFloat()
             )
             dismiss()
         }
