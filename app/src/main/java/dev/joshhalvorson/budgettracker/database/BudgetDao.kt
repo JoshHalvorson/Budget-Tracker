@@ -1,5 +1,6 @@
 package dev.joshhalvorson.budgettracker.database
 
+import android.database.Cursor
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -46,5 +47,8 @@ interface BudgetDao {
 
     @Query("SELECT other FROM budget WHERE id=1")
     fun getOther(): Float
+
+    @Query("SELECT * FROM Budget")
+    fun getAllCursor(): Cursor
 
 }

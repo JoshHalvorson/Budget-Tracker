@@ -1,9 +1,13 @@
 package dev.joshhalvorson.budgettracker.view.activity
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
@@ -53,6 +57,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var executor: Executor
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
+    private lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,8 +71,7 @@ class MainActivity : AppCompatActivity() {
         binding.expenseBreakdown.expenseBreakdownBudgetList.layoutManager =
             LinearLayoutManager(applicationContext)
 
-        val db =
-            Room.databaseBuilder(applicationContext, AppDatabase::class.java, "budget-db").build()
+        db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "budget-db").build()
 
         val biometricManager = BiometricManager.from(this)
         when (biometricManager.canAuthenticate()) {
@@ -368,4 +372,77 @@ class MainActivity : AppCompatActivity() {
         biometricPrompt.authenticate(promptInfo)
     }
 
+    private fun exportData() {
+        GlobalScope.launch {
+            var csvString = ""
+            val cursor = db.budgetDao().getAllCursor()
+            val success = cursor.moveToFirst()
+            if (success) {
+                while (!cursor.isAfterLast) {
+                    Log.i("exportData", cursor.getString(cursor.getColumnIndex("budget")))
+                    Log.i("exportData", cursor.getString(cursor.getColumnIndex("spent")))
+                    Log.i("exportData", cursor.getString(cursor.getColumnIndex("balance")))
+                    Log.i("exportData", cursor.getString(cursor.getColumnIndex("bills")))
+                    Log.i("exportData", cursor.getString(cursor.getColumnIndex("social")))
+                    Log.i("exportData", cursor.getString(cursor.getColumnIndex("transportation")))
+                    Log.i("exportData", cursor.getString(cursor.getColumnIndex("food")))
+                    Log.i("exportData", cursor.getString(cursor.getColumnIndex("insurance")))
+                    Log.i("exportData", cursor.getString(cursor.getColumnIndex("entertainment")))
+                    Log.i("exportData", cursor.getString(cursor.getColumnIndex("other")))
+
+                    val dataList = mutableListOf<String>()
+
+                    dataList.add("Budget: ${cursor.getString(cursor.getColumnIndex("budget"))}")
+                    dataList.add("Spent: ${cursor.getString(cursor.getColumnIndex("spent"))}")
+                    dataList.add("Balance: ${cursor.getString(cursor.getColumnIndex("balance"))}")
+                    dataList.add("Bills: ${cursor.getString(cursor.getColumnIndex("bills"))}")
+                    dataList.add("Social: ${cursor.getString(cursor.getColumnIndex("social"))}")
+                    dataList.add("Transportation: ${cursor.getString(cursor.getColumnIndex("transportation"))}")
+                    dataList.add("Food: ${cursor.getString(cursor.getColumnIndex("food"))}")
+                    dataList.add("Insurance: ${cursor.getString(cursor.getColumnIndex("insurance"))}")
+                    dataList.add("Entertainment: ${cursor.getString(cursor.getColumnIndex("entertainment"))}")
+                    dataList.add("Other: ${cursor.getString(cursor.getColumnIndex("other"))}")
+
+                    csvString = dataList.joinToString { it }
+                    Log.i("exportData", csvString)
+
+                    cursor.moveToNext()
+                }
+            } else {
+                //empty
+            }
+            cursor.close()
+
+            withContext(Dispatchers.Main) {
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, csvString)
+                    type = "text/plain"
+                }
+
+                val shareIntent = Intent.createChooser(sendIntent, "send_data")
+                if (sendIntent.resolveActivity(packageManager) != null) {
+                    startActivity(shareIntent)
+                }
+            }
+
+        }
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.share_data -> {
+                exportData()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 }

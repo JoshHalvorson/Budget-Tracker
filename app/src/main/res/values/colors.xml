@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">@color/fabColor</color>
+    <color name="colorPrimary">#ffd11a</color>
     <color name="colorPrimaryDark">@color/backgroundRectPurple</color>
     <color name="colorAccent">@color/backgroundRectYellow</color>
     <color name="backgroundRectYellow">#ffd11a</color>
