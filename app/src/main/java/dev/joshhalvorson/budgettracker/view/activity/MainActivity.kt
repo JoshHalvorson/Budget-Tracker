@@ -40,7 +40,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.Executor
+import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
@@ -50,6 +53,7 @@ class MainActivity : AppCompatActivity() {
     private var chartData = listOf<PieEntry>()
 
     private val listData = ArrayList<Pair<String, Float>>()
+    private val currentDate = getCurrentDate()
 
     private lateinit var adapter: BudgetRecyclerviewAdapter
     private lateinit var budget: Budget
@@ -266,6 +270,7 @@ class MainActivity : AppCompatActivity() {
             GlobalScope.launch {
                 val newBudget = Budget(
                     1,
+                    currentDate,
                     amount,
                     0f,
                     amount,
@@ -428,6 +433,11 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+    }
+
+    private fun getCurrentDate() : String {
+        val sdf = SimpleDateFormat("MM/yyyy")
+        return sdf.format(Date())
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

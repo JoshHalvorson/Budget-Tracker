@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class Budget(
     @PrimaryKey val id: Int,
+    @ColumnInfo(name = "date_started") var dateStarted: String,
     @ColumnInfo(name = "budget") var budget: Float,
     @ColumnInfo(name = "spent") var spent: Float,
     @ColumnInfo(name = "balance") var balance: Float,
