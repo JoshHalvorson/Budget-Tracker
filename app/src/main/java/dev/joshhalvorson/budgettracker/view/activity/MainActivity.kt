@@ -371,7 +371,7 @@ class MainActivity : AppCompatActivity() {
             })
 
         promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Verify indentity")
+            .setTitle("Verify identity")
             .setSubtitle("Log in using your biometric credential, or device credential")
             .setDeviceCredentialAllowed(true)
             .build()
