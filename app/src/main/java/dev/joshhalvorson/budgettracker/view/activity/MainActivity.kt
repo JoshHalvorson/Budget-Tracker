@@ -41,6 +41,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.*
 import java.util.concurrent.Executor
 import kotlin.collections.ArrayList
@@ -176,13 +177,13 @@ class MainActivity : AppCompatActivity() {
         GlobalScope.launch {
             expenseTypes.forEachIndexed { i, s ->
                 val amount = when (s) {
-                    "Bills" -> db.budgetDao().getBills()
-                    "Social" -> db.budgetDao().getSocial()
-                    "Transportation" -> db.budgetDao().getTransportation()
-                    "Food" -> db.budgetDao().getFood()
-                    "Insurance" -> db.budgetDao().getInsurance()
-                    "Entertainment" -> db.budgetDao().getEntertainment()
-                    "Other" -> db.budgetDao().getOther()
+                    "Bills" -> db.budgetDao().getBills(budget.id)
+                    "Social" -> db.budgetDao().getSocial(budget.id)
+                    "Transportation" -> db.budgetDao().getTransportation(budget.id)
+                    "Food" -> db.budgetDao().getFood(budget.id)
+                    "Insurance" -> db.budgetDao().getInsurance(budget.id)
+                    "Entertainment" -> db.budgetDao().getEntertainment(budget.id)
+                    "Other" -> db.budgetDao().getOther(budget.id)
                     else -> 0.0f
                 }
                 listData.add(Pair(s, amount))
@@ -269,7 +270,7 @@ class MainActivity : AppCompatActivity() {
         dialog.onResult = { amount ->
             GlobalScope.launch {
                 val newBudget = Budget(
-                    1,
+                    currentDate,
                     currentDate,
                     amount,
                     0f,
@@ -345,13 +346,14 @@ class MainActivity : AppCompatActivity() {
                                 hideViews()
                             }
                         } else {
-                            budget = currentBudget[0]
-                            val spent = db.budgetDao().getTotalSpent()
+                            budget = currentBudget[currentBudget.size - 1]
+                            checkIfNewMonth(budget)
+                            val spent = db.budgetDao().getTotalSpent(budget.id)
                             Log.i("testBudget", currentBudget.toString())
                             Log.i("testBudget", spent.toString())
                             withContext(Dispatchers.Main) {
                                 showViews()
-                                initChart(currentBudget[0], db)
+                                initChart(budget, db)
                             }
                         }
                     }
@@ -380,7 +382,7 @@ class MainActivity : AppCompatActivity() {
     private fun exportData() {
         GlobalScope.launch {
             var csvString = ""
-            val cursor = db.budgetDao().getAllCursor()
+            val cursor = db.budgetDao().getAllCursor(budget.id)
             val success = cursor.moveToFirst()
             if (success) {
                 while (!cursor.isAfterLast) {
@@ -438,6 +440,28 @@ class MainActivity : AppCompatActivity() {
     private fun getCurrentDate() : String {
         val sdf = SimpleDateFormat("MM/yyyy")
         return sdf.format(Date())
+    }
+
+    private fun checkIfNewMonth(budget: Budget) {
+        // get last budget, if its last month, init new budget
+        val format = SimpleDateFormat("MM/yyyy")
+        val oldDate = format.parse(budget.dateStarted)
+        val currentDate = format.parse(getCurrentDate())
+
+        when {
+            oldDate.before(currentDate) -> {
+                Log.i("dateCompare", "before")
+                hideViews()
+                initBudget(db)
+            }
+            oldDate == currentDate -> {
+                Log.i("dateCompare", "equals")
+            }
+            else -> {
+                Log.i("dateCompare", "after")
+            }
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

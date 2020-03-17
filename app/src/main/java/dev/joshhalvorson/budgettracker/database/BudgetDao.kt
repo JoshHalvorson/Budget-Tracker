@@ -18,37 +18,37 @@ interface BudgetDao {
     @Query("SELECT * FROM budget")
     fun getBudget(): List<Budget>
 
-    @Query("SELECT budget FROM budget WHERE id=1")
-    fun getTotalBudget(): Float
+    @Query("SELECT budget FROM budget WHERE id=:id")
+    fun getTotalBudget(id: String): Float
 
-    @Query("SELECT spent FROM budget WHERE id=1")
-    fun getTotalSpent(): Float
+    @Query("SELECT spent FROM budget WHERE id=:id")
+    fun getTotalSpent(id: String): Float
 
-    @Query("SELECT balance FROM budget WHERE id=1")
-    fun getBalance(): Float
+    @Query("SELECT balance FROM budget WHERE id=:id")
+    fun getBalance(id: String): Float
 
-    @Query("SELECT bills FROM budget WHERE id=1")
-    fun getBills(): Float
+    @Query("SELECT bills FROM budget WHERE id=:id")
+    fun getBills(id: String): Float
 
-    @Query("SELECT social FROM budget WHERE id=1")
-    fun getSocial(): Float
+    @Query("SELECT social FROM budget WHERE id=:id")
+    fun getSocial(id: String): Float
 
-    @Query("SELECT transportation FROM budget WHERE id=1")
-    fun getTransportation(): Float
+    @Query("SELECT transportation FROM budget WHERE id=:id")
+    fun getTransportation(id: String): Float
 
-    @Query("SELECT food FROM budget WHERE id=1")
-    fun getFood(): Float
+    @Query("SELECT food FROM budget WHERE id=:id")
+    fun getFood(id: String): Float
 
-    @Query("SELECT insurance FROM budget WHERE id=1")
-    fun getInsurance(): Float
+    @Query("SELECT insurance FROM budget WHERE id=:id")
+    fun getInsurance(id: String): Float
 
-    @Query("SELECT entertainment FROM budget WHERE id=1")
-    fun getEntertainment(): Float
+    @Query("SELECT entertainment FROM budget WHERE id=:id")
+    fun getEntertainment(id: String): Float
 
-    @Query("SELECT other FROM budget WHERE id=1")
-    fun getOther(): Float
+    @Query("SELECT other FROM budget WHERE id=:id")
+    fun getOther(id: String): Float
 
-    @Query("SELECT * FROM Budget")
-    fun getAllCursor(): Cursor
+    @Query("SELECT * FROM Budget WHERE id=:id")
+    fun getAllCursor(id: String): Cursor
 
 }
