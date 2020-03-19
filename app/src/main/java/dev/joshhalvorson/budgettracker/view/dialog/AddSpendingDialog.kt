@@ -1,6 +1,5 @@
 package dev.joshhalvorson.budgettracker.view.dialog
 
-import android.R.string
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.AdapterView
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import dev.joshhalvorson.budgettracker.databinding.FragmentAddSpendingDialogBinding
 
@@ -36,19 +34,20 @@ class AddSpendingDialog : DialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.addSpendingDialogCategorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: View,
-                position: Int,
-                id: Long
-            ) {
-                selectedItem = parent.getItemAtPosition(position).toString()
-                Log.i("aijwdpoia", selectedItem)
-            }
+        binding.addSpendingDialogCategorySpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View,
+                    position: Int,
+                    id: Long
+                ) {
+                    selectedItem = parent.getItemAtPosition(position).toString()
+                    Log.i("aijwdpoia", selectedItem)
+                }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+            }
 
 
         binding.addSpendingDialogAddButton.setOnClickListener {

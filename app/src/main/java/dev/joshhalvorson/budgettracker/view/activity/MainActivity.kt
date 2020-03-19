@@ -6,12 +6,6 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.LinearLayout.HORIZONTAL
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
@@ -39,7 +33,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.*
 import java.util.concurrent.Executor
 import kotlin.collections.ArrayList
@@ -239,9 +232,11 @@ class MainActivity : AppCompatActivity() {
 //        ll.addView(expenseTitle)
 //        ll.addView(expensePercent)
 
-        val legendElement = LayoutInflater.from(this).inflate(R.layout.budget_pie_chart_legend_element, null, false)
+        val legendElement =
+            LayoutInflater.from(this).inflate(R.layout.budget_pie_chart_legend_element, null, false)
         legendElement.legend_element_text.text = expenseTypes[index]
-        legendElement.legend_element_percent.text = if (pieEntry.value == 0.0f) "0%" else "${((pieEntry.value / budget.spent) * 100).roundToInt()}%"
+        legendElement.legend_element_percent.text =
+            if (pieEntry.value == 0.0f) "0%" else "${((pieEntry.value / budget.spent) * 100).roundToInt()}%"
         val drawable = legendElement.legend_element_icon.drawable as GradientDrawable
         drawable.setStroke(6, chartColors[index])
 //
@@ -444,7 +439,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun getCurrentDate() : String {
+    private fun getCurrentDate(): String {
         val sdf = SimpleDateFormat("MM/yyyy")
         return sdf.format(Date())
     }
