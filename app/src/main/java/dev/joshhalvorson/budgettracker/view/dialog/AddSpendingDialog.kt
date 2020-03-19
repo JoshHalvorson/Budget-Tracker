@@ -1,12 +1,17 @@
 package dev.joshhalvorson.budgettracker.view.dialog
 
+import android.R.string
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.AdapterView
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import dev.joshhalvorson.budgettracker.databinding.FragmentAddSpendingDialogBinding
+
 
 class AddSpendingDialog : DialogFragment() {
     var onResult: ((category: String, amount: Float) -> Unit)? = null
@@ -31,19 +36,20 @@ class AddSpendingDialog : DialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.addSpendingDialogCategorySpinner.setItems(
-            "Bills",
-            "Social",
-            "Transportation",
-            "Food",
-            "Insurance",
-            "Entertainment",
-            "Other"
-        )
+        binding.addSpendingDialogCategorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View,
+                position: Int,
+                id: Long
+            ) {
+                selectedItem = parent.getItemAtPosition(position).toString()
+                Log.i("aijwdpoia", selectedItem)
+            }
 
-        binding.addSpendingDialogCategorySpinner.setOnItemSelectedListener { view, position, id, item ->
-            selectedItem = view.getItems<String>()[position]
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+
 
         binding.addSpendingDialogAddButton.setOnClickListener {
             onResult?.invoke(

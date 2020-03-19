@@ -27,11 +27,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
-    <com.jaredrummler.materialspinner.MaterialSpinner
+    <androidx.appcompat.widget.AppCompatSpinner
         android:id="@+id/add_spending_dialog_category_spinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:backgroundTint="?android:attr/colorBackground"
+        android:entries="@array/budget_categories"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/textView3"
         app:layout_constraintEnd_toEndOf="parent"
