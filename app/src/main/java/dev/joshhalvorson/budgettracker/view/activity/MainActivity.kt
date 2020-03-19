@@ -196,51 +196,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createLegendView(pieEntry: PieEntry, index: Int, budget: Budget): View {
-//        val ll = LinearLayout(applicationContext)
-//        val layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-//        layoutParams.topMargin = 5
-//        ll.layoutParams = layoutParams
-//        ll.orientation = HORIZONTAL
-//
-//        val expenseTitle = TextView(applicationContext)
-//        expenseTitle.text = "${expenseTypes[index]}"
-//        val expenseTitleLayoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-//        expenseTitleLayoutParams.weight = 1.0f
-//        expenseTitle.layoutParams = expenseTitleLayoutParams
-//
-//        val expensePercent = TextView(applicationContext)
-//        if (pieEntry.value != 0.0f) {
-//            expensePercent.text = "${((pieEntry.value / budget.spent) * 100).roundToInt()}%"
-//        } else {
-//            expensePercent.text = "0%"
-//        }
-//        val expensePercentLayoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-//        expensePercentLayoutParams.weight = 0.0f
-//        expensePercent.layoutParams = expensePercentLayoutParams
-//
-//        val legendColor = ImageView(applicationContext)
-//        val legendColorLayoutParams = LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-//        legendColorLayoutParams.weight = 0.0f
-//        legendColorLayoutParams.topMargin = 8
-//        legendColorLayoutParams.rightMargin = 16
-//        legendColor.layoutParams = legendColorLayoutParams
-//        legendColor.setImageDrawable(resources.getDrawable(R.drawable.ic_budget_chart_legend_icon))
-//        val drawable = legendColor.drawable as GradientDrawable
-//        drawable.setStroke(6, chartColors[index])
-//
-//        ll.addView(legendColor)
-//        ll.addView(expenseTitle)
-//        ll.addView(expensePercent)
-
         val legendElement =
             LayoutInflater.from(this).inflate(R.layout.budget_pie_chart_legend_element, null, false)
+        
         legendElement.legend_element_text.text = expenseTypes[index]
+
         legendElement.legend_element_percent.text =
             if (pieEntry.value == 0.0f) "0%" else "${((pieEntry.value / budget.spent) * 100).roundToInt()}%"
+
         val drawable = legendElement.legend_element_icon.drawable as GradientDrawable
         drawable.setStroke(6, chartColors[index])
-//
-//        return ll
+
         return legendElement
     }
 
