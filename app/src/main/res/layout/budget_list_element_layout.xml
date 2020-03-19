@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="BIlls"
-        android:textColor="@android:color/black"
+        android:textColor="?android:attr/textColorPrimary"
         app:layout_constraintStart_toEndOf="@+id/expense_imageview"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="1246.25"
-        android:textColor="@android:color/black"
+        android:textColor="?android:attr/textColorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
