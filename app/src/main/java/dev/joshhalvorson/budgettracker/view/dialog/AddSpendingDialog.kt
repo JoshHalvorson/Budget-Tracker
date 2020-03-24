@@ -6,8 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.fragment.app.DialogFragment
+import dev.joshhalvorson.budgettracker.R
 import dev.joshhalvorson.budgettracker.databinding.FragmentAddSpendingDialogBinding
 
 
@@ -34,28 +35,38 @@ class AddSpendingDialog : DialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.addSpendingDialogCategorySpinner.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View,
-                    position: Int,
-                    id: Long
-                ) {
-                    selectedItem = parent.getItemAtPosition(position).toString()
-                    Log.i("aijwdpoia", selectedItem)
-                }
+        val items = listOf(
+            "Bills",
+            "Social",
+            "Transportation",
+            "Food",
+            "Insurance",
+            "Entertainment",
+            "Other"
+        )
+        val adapter = ArrayAdapter(requireContext(), R.layout.list_item_layout, items)
+        binding.textField.setAdapter(adapter)
 
-                override fun onNothingSelected(parent: AdapterView<*>?) {}
-            }
-
+        binding.textField.setOnItemClickListener { parent, view, position, id ->
+            selectedItem = parent.getItemAtPosition(position).toString()
+            Log.i("aijwdpoia", selectedItem)
+        }
 
         binding.addSpendingDialogAddButton.setOnClickListener {
-            onResult?.invoke(
-                selectedItem,
-                binding.addSpendingDialogAmountEditText.text.toString().toFloat()
-            )
-            dismiss()
+            if (items.contains(binding.textField.text.toString()) && binding.addSpendingDialogAmountEditText.text.toString().isNotBlank()) {
+                onResult?.invoke(
+                    selectedItem,
+                    binding.addSpendingDialogAmountEditText.text.toString().toFloat()
+                )
+                dismiss()
+            } else if (!items.contains(binding.textField.text.toString()) && !binding.addSpendingDialogAmountEditText.text.toString().isNotBlank()) {
+                binding.addSpendingDialogAmountInputLayout.error = "Enter valid amount"
+                binding.addSpendingDialogCategorySpinner.error = "Enter valid category"
+            } else if (!binding.addSpendingDialogAmountEditText.text.toString().isNotBlank()) {
+                binding.addSpendingDialogAmountInputLayout.error = "Enter valid amount"
+            } else {
+                binding.addSpendingDialogCategorySpinner.error = "Enter valid category"
+            }
         }
     }
 }
