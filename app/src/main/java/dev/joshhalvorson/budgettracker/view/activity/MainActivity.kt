@@ -27,6 +27,7 @@ import dev.joshhalvorson.budgettracker.databinding.ActivityMainBinding
 import dev.joshhalvorson.budgettracker.model.Budget
 import dev.joshhalvorson.budgettracker.view.dialog.AddSpendingDialog
 import dev.joshhalvorson.budgettracker.view.dialog.InitBudgetDialog
+import dev.joshhalvorson.budgettracker.view.dialog.LoginDialog
 import kotlinx.android.synthetic.main.budget_pie_chart_legend_element.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -76,15 +77,24 @@ class MainActivity : AppCompatActivity() {
                 Log.d("BioAuth", "App can authenticate using biometrics.")
                 authenticateWithBio(db)
             }
-            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE ->
+
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
                 Log.e("BioAuth", "No biometric features available on this device.")
-            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE ->
+                launchLoginDialog()
+            }
+
+            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> {
                 Log.e("BioAuth", "Biometric features are currently unavailable.")
-            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED ->
+                launchLoginDialog()
+            }
+
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
                 Log.e(
                     "BioAuth", "The user hasn't associated " +
                             "any biometric credentials with their account."
                 )
+                launchLoginDialog()
+            }
         }
 
         binding.editBudgetButton.setOnClickListener {
@@ -104,6 +114,32 @@ class MainActivity : AppCompatActivity() {
             }
             dialog.show(supportFragmentManager, "add_spending")
         }
+    }
+
+    private fun launchLoginDialog() {
+        val dialog = LoginDialog()
+        dialog.onResult = {
+            GlobalScope.launch {
+                val currentBudget = db.budgetDao().getBudget()
+                if (currentBudget.isEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        initBudget(db)
+                        hideViews()
+                    }
+                } else {
+                    budget = currentBudget[currentBudget.size - 1]
+                    checkIfNewMonth(budget)
+                    val spent = db.budgetDao().getTotalSpent(budget.id)
+                    Log.i("testBudget", currentBudget.toString())
+                    Log.i("testBudget", spent.toString())
+                    withContext(Dispatchers.Main) {
+                        showViews()
+                        initChart(budget, db)
+                    }
+                }
+            }
+        }
+        dialog.show(supportFragmentManager, "login_dialog")
     }
 
     private fun initChart(budget: Budget, db: AppDatabase) {
@@ -198,7 +234,7 @@ class MainActivity : AppCompatActivity() {
     private fun createLegendView(pieEntry: PieEntry, index: Int, budget: Budget): View {
         val legendElement =
             LayoutInflater.from(this).inflate(R.layout.budget_pie_chart_legend_element, null, false)
-        
+
         legendElement.legend_element_text.text = expenseTypes[index]
 
         legendElement.legend_element_percent.text =
