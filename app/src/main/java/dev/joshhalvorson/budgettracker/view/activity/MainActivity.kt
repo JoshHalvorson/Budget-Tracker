@@ -30,7 +30,6 @@ class MainActivity : AppCompatActivity() {
     private fun init() {
         binding.viewPager.adapter = ViewPagerFragmentAdapter(this)
 
-        // attaching tab mediator
         TabLayoutMediator(binding.tabLayout, binding.viewPager,
             TabConfigurationStrategy { tab: TabLayout.Tab, position: Int ->
                 tab.text = when (position) {
