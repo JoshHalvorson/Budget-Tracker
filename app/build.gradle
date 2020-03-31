@@ -59,4 +59,6 @@ dependencies {
 
     //bio auth
     implementation 'androidx.biometric:biometric:1.0.1'
+
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
 }
