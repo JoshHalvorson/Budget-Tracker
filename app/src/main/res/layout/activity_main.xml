@@ -1,104 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/main_activity_background"
-    android:paddingStart="20dp"
-    android:paddingTop="20dp"
-    android:paddingEnd="20dp"
-    tools:context=".view.activity.MainActivity">
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/budget_pie_chart_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Expenses: "
-        android:textAlignment="center"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/budget_pie_chart"
-        app:layout_constraintEnd_toEndOf="@+id/budget_pie_chart"
-        app:layout_constraintStart_toStartOf="@+id/budget_pie_chart"
-        app:layout_constraintTop_toTopOf="@+id/budget_pie_chart" />
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        style="@style/Widget.MaterialComponents.TabLayout.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/budget_pie_chart"
-        android:layout_width="0dp"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        android:layout_weight="1" />
 
-    </com.github.mikephil.charting.charts.PieChart>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/edit_budget_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="32dp"
-        android:backgroundTint="@color/fabColor"
-        android:clickable="true"
-        app:tint="@null"
-        app:backgroundTint="@color/fabColor"
-        android:src="@drawable/ic_add_black_24dp"
-        app:borderWidth="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_add_black_24dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent=".35" />
-
-    <LinearLayout
-        android:id="@+id/budget_chart_legend"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toTopOf="parent"></LinearLayout>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent=".27" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent=".5" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/expense_breakdown_card"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="32dp"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="5dp"
-        app:cardPreventCornerOverlap="true"
-        app:cardUseCompatPadding="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline">
-
-        <include layout="@layout/expense_breakdown_card_content" android:id="@+id/expense_breakdown"/>
-
-    </androidx.cardview.widget.CardView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
