@@ -53,7 +53,6 @@ class AllBudgetsRecyclerviewAdapter(private val data: ArrayList<Budget>) :
             itemView.budget_list_pie_chart.setTransparentCircleColor(Color.TRANSPARENT)
             itemView.budget_list_pie_chart.setTransparentCircleAlpha(110)
             itemView.budget_list_pie_chart.holeRadius = 89f
-//            itemView.budget_list_pie_chart.animateY(1400, Easing.EaseInOutQuad)
             itemView.budget_list_pie_chart.setCenterTextSize(18f)
             itemView.budget_list_pie_chart.legend.isEnabled = false
             itemView.budget_list_pie_chart.description.isEnabled = false
