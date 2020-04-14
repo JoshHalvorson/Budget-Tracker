@@ -18,7 +18,6 @@
             android:id="@+id/budget_list_pie_chart"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -51,6 +50,15 @@
             android:text="TextView"
             app:layout_constraintStart_toStartOf="@+id/budget_list_budget"
             app:layout_constraintTop_toBottomOf="@+id/budget_list_budget" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/all_budgets_expanded_view_expense_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/budget_list_total_spent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

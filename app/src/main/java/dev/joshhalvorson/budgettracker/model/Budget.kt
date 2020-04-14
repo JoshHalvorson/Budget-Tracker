@@ -18,4 +18,21 @@ data class Budget(
     @ColumnInfo(name = "insurance") var insurance: Float,
     @ColumnInfo(name = "entertainment") var entertainment: Float,
     @ColumnInfo(name = "other") var other: Float
-)
+) {
+    fun getExpensePairs() : ArrayList<Pair<String, Float>> {
+        val data = arrayListOf(
+            Pair("Bills", this.bills),
+            Pair("Social", this.social),
+            Pair("Transportation", this.transportation),
+            Pair("Food", this.food),
+            Pair("Insurance", this.insurance),
+            Pair("Entertainment", this.entertainment),
+            Pair("Other", this.other)
+        )
+        data.sortBy {
+            it.second
+        }
+        data.reverse()
+        return data
+    }
+}
